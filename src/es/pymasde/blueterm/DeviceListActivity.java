@@ -16,16 +16,19 @@
 
 package es.pymasde.blueterm;
 
+import java.lang.reflect.Method;
 import java.util.Set;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.IBluetooth;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -109,15 +112,46 @@ public class DeviceListActivity extends Activity {
         if (pairedDevices.size() > 0) {
             findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
             for (BluetoothDevice device : pairedDevices) {
-                String alias = device.getAlias();
-                String item;
-                if(alias != null) {
-                    item = alias + " (" + device.getName() + ")";
-                } else {
-                    item = device.getName();
-                }
-                item += "\n" + device.getAddress();
-                mPairedDevicesArrayAdapter.add(item);
+				String name = null;
+				// first try to get alias name
+				try {
+					if (android.os.Build.VERSION.SDK_INT >= 14) {
+						// We most likely have aliases, so use our AIDL interface.
+						// This magic code is borrowed from here:
+						// https://github.com/jroal/a2dpvolume/blob/584f54c7e593c3904029880349ca64dff5a7d6fd/app/src/main/java/a2dp/Vol/main.java#L1194
+						Class<?> c2 = Class.forName("android.os.ServiceManager");
+						Method m2 = c2.getDeclaredMethod("getService", String.class);
+						IBinder b = (IBinder) m2.invoke(null, "bluetooth");
+						Class<?> c3 = Class.forName("android.bluetooth.IBluetooth");
+						Class[] s2 = c3.getDeclaredClasses();
+						Class<?> c = s2[0];
+						for(Method m: c.getMethods()) {
+							Log.d(TAG, " > " + m);
+						}
+						Method m = c.getDeclaredMethod("asInterface", IBinder.class);
+						m.setAccessible(true);
+						IBluetooth ibta = (IBluetooth) m.invoke(null, b);
+						if(ibta == null) {
+							Log.d(TAG, "Couldn't obtain IBTA");
+						} else {
+							try {
+								Method gra = IBluetooth.class.getDeclaredMethod("getRemoteAlias", String.class);
+								name = (String) gra.invoke(ibta, device.getAddress());
+							} catch (Exception e) {
+								Method gra = IBluetooth.class.getDeclaredMethod("getRemoteAlias", BluetoothDevice.class);
+								name = (String) gra.invoke(ibta, device);
+							}
+						}
+					}
+				} catch (Exception e) {
+					Log.d(TAG, "Could not access alias", e);
+					// and just ignore it
+				}
+				if (name == null) {
+					// fallback
+					name = device.getName();
+				}
+                mPairedDevicesArrayAdapter.add(name + "\n" + device.getAddress());
             }
         } else {
             String noDevices = getResources().getText(R.string.none_paired).toString();
