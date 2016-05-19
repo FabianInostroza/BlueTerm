@@ -43,7 +43,7 @@ public class BluetoothSerialService {
     private static final boolean D = true;
 
 
-	private static final UUID SerialPortServiceClass_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private static final UUID SerialPortServiceClass_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     // Member fields
     private final BluetoothAdapter mAdapter;
@@ -103,14 +103,14 @@ public class BluetoothSerialService {
 
         // Cancel any thread attempting to make a connection
         if (mConnectThread != null) {
-        	mConnectThread.cancel(); 
-        	mConnectThread = null;
+            mConnectThread.cancel(); 
+            mConnectThread = null;
         }
 
         // Cancel any thread currently running a connection
         if (mConnectedThread != null) {
-        	mConnectedThread.cancel(); 
-        	mConnectedThread = null;
+            mConnectedThread.cancel(); 
+            mConnectedThread = null;
         }
 
         setState(STATE_NONE);
@@ -147,14 +147,14 @@ public class BluetoothSerialService {
 
         // Cancel the thread that completed the connection
         if (mConnectThread != null) {
-        	mConnectThread.cancel(); 
-        	mConnectThread = null;
+            mConnectThread.cancel(); 
+            mConnectThread = null;
         }
 
         // Cancel any thread currently running a connection
         if (mConnectedThread != null) {
-        	mConnectedThread.cancel(); 
-        	mConnectedThread = null;
+            mConnectedThread.cancel(); 
+            mConnectedThread = null;
         }
 
         // Start the thread to manage the connection and perform transmissions
@@ -179,13 +179,13 @@ public class BluetoothSerialService {
 
 
         if (mConnectThread != null) {
-        	mConnectThread.cancel(); 
-        	mConnectThread = null;
+            mConnectThread.cancel(); 
+            mConnectThread = null;
         }
 
         if (mConnectedThread != null) {
-        	mConnectedThread.cancel(); 
-        	mConnectedThread = null;
+            mConnectedThread.cancel(); 
+            mConnectedThread = null;
         }
 
         setState(STATE_NONE);
@@ -252,15 +252,15 @@ public class BluetoothSerialService {
             // Get a BluetoothSocket for a connection with the
             // given BluetoothDevice
             try {
-            	if ( mAllowInsecureConnections ) {
-            		Method method;
-            		
-            		method = device.getClass().getMethod("createRfcommSocket", new Class[] { int.class } );
+                if ( mAllowInsecureConnections ) {
+                    Method method;
+                    
+                    method = device.getClass().getMethod("createRfcommSocket", new Class[] { int.class } );
                     tmp = (BluetoothSocket) method.invoke(device, 1);  
-            	}
-            	else {
-            		tmp = device.createRfcommSocketToServiceRecord( SerialPortServiceClass_UUID );
-            	}
+                }
+                else {
+                    tmp = device.createRfcommSocketToServiceRecord( SerialPortServiceClass_UUID );
+                }
             } catch (Exception e) {
                 Log.e(TAG, "create() failed", e);
             }
@@ -386,11 +386,11 @@ public class BluetoothSerialService {
     }
     
     public void setAllowInsecureConnections( boolean allowInsecureConnections ) {
-    	mAllowInsecureConnections = allowInsecureConnections;
+        mAllowInsecureConnections = allowInsecureConnections;
     }
     
     public boolean getAllowInsecureConnections() {
-    	return mAllowInsecureConnections;
+        return mAllowInsecureConnections;
     }
 
 }
