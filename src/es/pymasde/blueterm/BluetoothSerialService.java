@@ -147,11 +147,17 @@ public class BluetoothSerialService {
 
         // Cancel any thread attempting to make a connection
         if (mState == STATE_CONNECTING) {
-            if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}
+            if (mConnectThread != null) {
+                mConnectThread.cancel();
+                mConnectThread = null;
+            }
         }
 
         // Cancel any thread currently running a connection
-        if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
+        if (mConnectedThread != null) {
+            mConnectedThread.cancel();
+            mConnectedThread = null;
+        }
 
         // Start the thread to connect with the given device
         mConnectThread = new ConnectThread(device);
@@ -161,10 +167,12 @@ public class BluetoothSerialService {
 
     /**
      * Start the ConnectedThread to begin managing a Bluetooth connection
-     * @param socket  The BluetoothSocket on which the connection was made
-     * @param device  The BluetoothDevice that has been connected
+     *
+     * @param socket The BluetoothSocket on which the connection was made
+     * @param device The BluetoothDevice that has been connected
      */
-    public synchronized void connected(BluetoothSocket socket, BluetoothDevice device, final String socketType) {
+    public synchronized void connected(BluetoothSocket socket, BluetoothDevice device,
+            final String socketType) {
         if (D) Log.d(TAG, "connected, type: " + socketType);
 
         // Cancel the thread that completed the connection
