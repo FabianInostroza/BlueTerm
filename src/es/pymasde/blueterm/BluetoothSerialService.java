@@ -63,9 +63,9 @@ public class BluetoothSerialService {
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
     private int mState;
-    
+
     private boolean mAllowInsecureConnections;
-    
+
     private EmulatorView mEmulatorView;
     private Context mContext;
 
@@ -115,13 +115,13 @@ public class BluetoothSerialService {
 
         // Cancel any thread attempting to make a connection
         if (mConnectThread != null) {
-            mConnectThread.cancel(); 
+            mConnectThread.cancel();
             mConnectThread = null;
         }
 
         // Cancel any thread currently running a connection
         if (mConnectedThread != null) {
-            mConnectedThread.cancel(); 
+            mConnectedThread.cancel();
             mConnectedThread = null;
         }
 
@@ -169,13 +169,13 @@ public class BluetoothSerialService {
 
         // Cancel the thread that completed the connection
         if (mConnectThread != null) {
-            mConnectThread.cancel(); 
+            mConnectThread.cancel();
             mConnectThread = null;
         }
 
         // Cancel any thread currently running a connection
         if (mConnectedThread != null) {
-            mConnectedThread.cancel(); 
+            mConnectedThread.cancel();
             mConnectedThread = null;
         }
 
@@ -211,12 +211,12 @@ public class BluetoothSerialService {
 
 
         if (mConnectThread != null) {
-            mConnectThread.cancel(); 
+            mConnectThread.cancel();
             mConnectThread = null;
         }
 
         if (mConnectedThread != null) {
-            mConnectedThread.cancel(); 
+            mConnectedThread.cancel();
             mConnectedThread = null;
         }
 
@@ -239,7 +239,7 @@ public class BluetoothSerialService {
         // Perform the write unsynchronized
         r.write(out);
     }
-    
+
     /**
      * Indicate that the connection attempt failed and notify the UI Activity.
      */
@@ -372,9 +372,9 @@ public class BluetoothSerialService {
             try {
                 if ( mAllowInsecureConnections ) {
                     Method method;
-                    
+
                     method = device.getClass().getMethod("createRfcommSocket", new Class[] { int.class } );
-                    tmp = (BluetoothSocket) method.invoke(device, 1);  
+                    tmp = (BluetoothSocket) method.invoke(device, 1);
                 }
                 else {
                     tmp = device.createRfcommSocketToServiceRecord( SerialPortServiceClass_UUID );
@@ -436,7 +436,7 @@ public class BluetoothSerialService {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
-        
+
 
         public ConnectedThread(BluetoothSocket socket) {
             Log.d(TAG, "create ConnectedThread");
@@ -502,11 +502,11 @@ public class BluetoothSerialService {
             }
         }
     }
-    
+
     public void setAllowInsecureConnections( boolean allowInsecureConnections ) {
         mAllowInsecureConnections = allowInsecureConnections;
     }
-    
+
     public boolean getAllowInsecureConnections() {
         return mAllowInsecureConnections;
     }
