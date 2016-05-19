@@ -114,7 +114,7 @@ public class DeviceListActivity extends Activity {
                 if(alias != null) {
                     item = alias + " (" + device.getName() + ")";
                 } else {
-                    item = deivce.getName();
+                    item = device.getName();
                 }
                 item += "\n" + device.getAddress();
                 mPairedDevicesArrayAdapter.add(item);
