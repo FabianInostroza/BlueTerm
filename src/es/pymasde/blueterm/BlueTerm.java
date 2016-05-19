@@ -3028,9 +3028,9 @@ class EmulatorView extends View implements GestureDetector.OnGestureListener {
 
     public EmulatorView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        TypedArray a = context.obtainStyledAttributes(R.styleable.EmulatorView);
-        initializeScrollbars(a);
-        a.recycle();
+        //TypedArray a = context.obtainStyledAttributes(R.styleable.EmulatorView);
+        //initializeScrollbars(a);
+        //a.recycle();
         commonConstructor(context);
     }
 
