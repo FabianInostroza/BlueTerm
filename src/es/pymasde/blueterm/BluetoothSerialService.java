@@ -283,6 +283,9 @@ public class BluetoothSerialService {
         bundle.putString(BlueTerm.TOAST, mContext.getString(R.string.toast_connection_lost) );
         msg.setData(bundle);
         mHandler.sendMessage(msg);
+
+        // Start the service over to restart listening mode
+        BluetoothSerialService.this.start();
     }
 
     /**
