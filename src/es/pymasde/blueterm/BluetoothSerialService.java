@@ -43,6 +43,15 @@ public class BluetoothSerialService {
     private static final String TAG = "BluetoothReadService";
     private static final boolean D = true;
 
+    // Name for the SDP record when creating server socket
+    private static final String NAME_SECURE = "BlueTermSecure";
+    private static final String NAME_INSECURE = "BlueTermInsecure";
+
+    // Unique UUID for this application
+    private static final UUID MY_UUID_SECURE =
+            UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
+    private static final UUID MY_UUID_INSECURE =
+            UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
     private static final UUID SerialPortServiceClass_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
@@ -155,8 +164,8 @@ public class BluetoothSerialService {
      * @param socket  The BluetoothSocket on which the connection was made
      * @param device  The BluetoothDevice that has been connected
      */
-    public synchronized void connected(BluetoothSocket socket, BluetoothDevice device) {
-        if (D) Log.d(TAG, "connected");
+    public synchronized void connected(BluetoothSocket socket, BluetoothDevice device, final String socketType) {
+        if (D) Log.d(TAG, "connected, type: " + socketType);
 
         // Cancel the thread that completed the connection
         if (mConnectThread != null) {
@@ -168,6 +177,16 @@ public class BluetoothSerialService {
         if (mConnectedThread != null) {
             mConnectedThread.cancel(); 
             mConnectedThread = null;
+        }
+
+        // Cancel the accept thread because we only want to connect to one device
+        if (mSecureAcceptThread != null) {
+            mSecureAcceptThread.cancel();
+            mSecureAcceptThread = null;
+        }
+        if (mInsecureAcceptThread != null) {
+            mInsecureAcceptThread.cancel();
+            mInsecureAcceptThread = null;
         }
 
         // Start the thread to manage the connection and perform transmissions
@@ -298,7 +317,7 @@ public class BluetoothSerialService {
 
                 // If a connection was accepted
                 if (socket != null) {
-                    synchronized (BluetoothChatService.this) {
+                    synchronized (BluetoothSerialService.this) {
                         switch (mState) {
                             case STATE_LISTEN:
                             case STATE_CONNECTING:
@@ -341,10 +360,12 @@ public class BluetoothSerialService {
     private class ConnectThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final BluetoothDevice mmDevice;
+        private final String mSocketType;
 
         public ConnectThread(BluetoothDevice device) {
             mmDevice = device;
             BluetoothSocket tmp = null;
+            mSocketType = "Unknown";
 
             // Get a BluetoothSocket for a connection with the
             // given BluetoothDevice
@@ -395,7 +416,7 @@ public class BluetoothSerialService {
             }
 
             // Start the connected thread
-            connected(mmSocket, mmDevice);
+            connected(mmSocket, mmDevice, mSocketType);
         }
 
         public void cancel() {
