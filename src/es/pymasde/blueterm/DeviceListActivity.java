@@ -109,10 +109,15 @@ public class DeviceListActivity extends Activity {
         if (pairedDevices.size() > 0) {
             findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
             for (BluetoothDevice device : pairedDevices) {
-                String name = device.getAlias();
-                if(!name)
-                    name = device.getName();
-                mPairedDevicesArrayAdapter.add(name + "\n" + device.getAddress());
+                String alias = device.getAlias();
+                String item;
+                if(alias != null) {
+                    item = alias + " (" + device.getName() + ")";
+                } else {
+                    item = deivce.getName();
+                }
+                item += "\n" + device.getAddress();
+                mPairedDevicesArrayAdapter.add(item);
             }
         } else {
             String noDevices = getResources().getText(R.string.none_paired).toString();
