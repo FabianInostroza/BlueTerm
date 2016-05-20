@@ -659,7 +659,8 @@ public class BlueTerm extends Activity {
         switch (item.getItemId()) {
         case R.id.connect:
         	
-        	if (getConnectionState() == BluetoothSerialService.STATE_NONE) {
+        	if (getConnectionState() == BluetoothSerialService.STATE_NONE ||
+                    getConnectionState() == BluetoothSerialService.STATE_LISTEN) {
         		// Launch the DeviceListActivity to see devices and do scan
         		Intent serverIntent = new Intent(this, DeviceListActivity.class);
         		startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
