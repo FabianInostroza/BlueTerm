@@ -38,8 +38,10 @@
     <!-- Preference dialog -->
     <string name="general_preferences">General</string>
 
-    <string name="title_localhecho_preference">Local echo</string>
+    <string name="title_localecho_preference">Local echo</string>
     <string name="summary_localecho_preference">Display the key strokes</string>
+    <string name="title_localedit_preference">Local line editing</string>
+    <string name="summary_localedit_preference">Edit line locally before sending it</string>
 
     <string name="title_allowinboundconnections_preference">Accept incoming connections</string>
     <string name="summary_allowinboundconnections_preference">Accept incoming bluetooth connections</string>
@@ -91,6 +93,7 @@
 
    <!-- Don't localize these default values -->
    <string name="default_value_localecho_preference">false</string>
+   <string name="default_value_localedit_preference">false</string>
    <string name="default_value_allowinboundconnections_preference">true</string>
    <string name="default_value_allowinsecureconnections_preference">true</string>
    <string name="default_value_fontsize_preference">10</string>

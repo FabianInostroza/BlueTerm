@@ -32,8 +32,14 @@
         <CheckBoxPreference 
                 android:key="localecho"
                 android:defaultValue="@string/default_value_localecho_preference"
-                android:title="@string/title_localhecho_preference"
+                android:title="@string/title_localecho_preference"
                 android:summary="@string/summary_localecho_preference" />
+                
+        <CheckBoxPreference 
+                android:key="localedit"
+                android:defaultValue="@string/default_value_localedit_preference"
+                android:title="@string/title_localedit_preference"
+                android:summary="@string/summary_localedit_preference" />
                 
         <CheckBoxPreference 
                 android:key="allowinboundconnections"
