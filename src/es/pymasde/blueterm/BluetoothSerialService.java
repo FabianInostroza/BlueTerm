@@ -47,12 +47,9 @@ public class BluetoothSerialService {
     private static final String NAME_SECURE = "BlueTermSecure";
     private static final String NAME_INSECURE = "BlueTermInsecure";
 
-    // Unique UUID for this application
-    private static final UUID MY_UUID_SECURE =
-            UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
-    private static final UUID MY_UUID_INSECURE =
-            UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
-
+    // We could use unique UUIDs for this application --
+    // but we want to connect to serial board, not to android peer,
+    // so we will use the same "generic SPP" UUID everywhere.
     private static final UUID SerialPortServiceClass_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     // Member fields
@@ -306,10 +303,10 @@ public class BluetoothSerialService {
             try {
                 if (secure) {
                     tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME_SECURE,
-                            MY_UUID_SECURE);
+                            SerialPortServiceClass_UUID);
                 } else {
                     tmp = mAdapter.listenUsingInsecureRfcommWithServiceRecord(
-                            NAME_INSECURE, MY_UUID_INSECURE);
+                            NAME_INSECURE, SerialPortServiceClass_UUID);
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Socket Type: " + mSocketType + "listen() failed", e);
