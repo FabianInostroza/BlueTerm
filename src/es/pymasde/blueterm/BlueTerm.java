@@ -229,6 +229,7 @@ public class BlueTerm extends Activity {
 
         mLineEditView = (EditText) findViewById(R.id.lineEdit);
         mLineEditView.setVisibility(mLocalEdit ? View.VISIBLE : View.GONE);
+		Log.d(LOG_TAG, "+++*** visibility now: "+mLineEditView.getVisibility());
 
         mKeyListener = new TermKeyListener();
 
@@ -360,6 +361,7 @@ public class BlueTerm extends Activity {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         mLineEditView.setVisibility(mLocalEdit ? View.VISIBLE : View.GONE);
+		Log.d(LOG_TAG, "+++*** visibility now: "+mLineEditView.getVisibility());
         mEmulatorView.setTextSize((int) (mFontSize * metrics.density));
         setColors();
         mControlKeyCode = CONTROL_KEY_SCHEMES[mControlKeyId];
