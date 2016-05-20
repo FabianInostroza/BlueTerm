@@ -20,20 +20,21 @@
     <PreferenceCategory
             android:title="@string/general_preferences">
             
-		<ListPreference
-			android:key="screenorientation"
-			android:defaultValue="@string/default_screenorientation_preference"
-			android:title="@string/title_screenorientation_preference"
-			android:summary="@string/summary_screenorientation_preference"
-			android:entries="@array/entries_screenorientation_preference"
-			android:entryValues="@array/entryvalues_screenorientation_preference"
-			android:dialogTitle="@string/dialog_title_screenorientation_preference" />
+        <ListPreference
+            android:key="screenorientation"
+            android:defaultValue="@string/default_screenorientation_preference"
+            android:title="@string/title_screenorientation_preference"
+            android:summary="@string/summary_screenorientation_preference"
+            android:entries="@array/entries_screenorientation_preference"
+            android:entryValues="@array/entryvalues_screenorientation_preference"
+            android:dialogTitle="@string/dialog_title_screenorientation_preference" />
 
         <CheckBoxPreference 
                 android:key="localecho"
                 android:defaultValue="@string/default_value_localecho_preference"
                 android:title="@string/title_localecho_preference"
-                android:summary="@string/summary_localecho_preference" />
+                android:summary="@string/summary_localecho_preference"
+                android:dependency="localedit" />
                 
         <CheckBoxPreference 
                 android:key="localedit"
