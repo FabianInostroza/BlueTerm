@@ -62,6 +62,7 @@ public class BluetoothSerialService {
     private int mState;
 
     private boolean mAllowInsecureConnections;
+    private boolean mAllowInboundConnections;
 
     private EmulatorView mEmulatorView;
     private Context mContext;
@@ -84,6 +85,7 @@ public class BluetoothSerialService {
         mEmulatorView = emulatorView;
         mContext = context;
         mAllowInsecureConnections = true;
+        mAllowInboundConnections = true;
     }
 
     /**
@@ -125,13 +127,15 @@ public class BluetoothSerialService {
         setState(STATE_LISTEN);
 
         // Start the thread to listen on a BluetoothServerSocket
-        if (mSecureAcceptThread == null) {
-            mSecureAcceptThread = new AcceptThread(true);
-            mSecureAcceptThread.start();
-        }
-        if (mInsecureAcceptThread == null && mAllowInsecureConnections) {
-            mInsecureAcceptThread = new AcceptThread(false);
-            mInsecureAcceptThread.start();
+        if (mAllowInboundConnections) {
+            if (mSecureAcceptThread == null) {
+                mSecureAcceptThread = new AcceptThread(true);
+                mSecureAcceptThread.start();
+            }
+            if (mInsecureAcceptThread == null && mAllowInsecureConnections) {
+                mInsecureAcceptThread = new AcceptThread(false);
+                mInsecureAcceptThread.start();
+            }
         }
     }
 
@@ -525,8 +529,8 @@ public class BluetoothSerialService {
         mAllowInsecureConnections = allowInsecureConnections;
     }
 
-    public boolean getAllowInsecureConnections() {
-        return mAllowInsecureConnections;
+    public void setAllowInboundConnections( boolean allowInboundConnections ) {
+        mAllowInboundConnections = allowInboundConnections;
     }
 
 }

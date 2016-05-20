@@ -129,6 +129,7 @@ public class BlueTerm extends Activity {
     private int mColorId = 2;
     private int mControlKeyId = 0;
     private boolean mAllowInsecureConnections = true;
+    private boolean mAllowInboundConnections = true;
     private int mIncomingEoL_0D = 0x0D;
     private int mIncomingEoL_0A = 0x0A;
     private int mOutgoingEoL_0D = 0x0D;
@@ -141,6 +142,7 @@ public class BlueTerm extends Activity {
     private static final String COLOR_KEY = "color";
     private static final String CONTROLKEY_KEY = "controlkey";
     private static final String ALLOW_INSECURE_CONNECTIONS_KEY = "allowinsecureconnections";
+    private static final String ALLOW_INBOUND_CONNECTIONS_KEY = "allowinboundconnections";
     private static final String INCOMING_EOL_0D_KEY = "incoming_eol_0D";
     private static final String INCOMING_EOL_0A_KEY = "incoming_eol_0A";
     private static final String OUTGOING_EOL_0D_KEY = "outgoing_eol_0D";
@@ -332,6 +334,7 @@ public class BlueTerm extends Activity {
         mColorId = readIntPref(COLOR_KEY, mColorId, COLOR_SCHEMES.length - 1);
         mControlKeyId = readIntPref(CONTROLKEY_KEY, mControlKeyId, CONTROL_KEY_SCHEMES.length - 1);
         mAllowInsecureConnections = mPrefs.getBoolean( ALLOW_INSECURE_CONNECTIONS_KEY, mAllowInsecureConnections);
+        mAllowInboundConnections = mPrefs.getBoolean( ALLOW_INBOUND_CONNECTIONS_KEY, mAllowInboundConnections);
 
         mIncomingEoL_0D = readIntPref(INCOMING_EOL_0D_KEY, mIncomingEoL_0D, 0x0D0A);
         mIncomingEoL_0A = readIntPref(INCOMING_EOL_0A_KEY, mIncomingEoL_0A, 0x0D0A);
@@ -348,6 +351,7 @@ public class BlueTerm extends Activity {
         setColors();
         mControlKeyCode = CONTROL_KEY_SCHEMES[mControlKeyId];
         mSerialService.setAllowInsecureConnections( mAllowInsecureConnections );
+        mSerialService.setAllowInboundConnections( mAllowInboundConnections );
         
         if (mEmulatorView != null) {
             mEmulatorView.setIncomingEoL_0D( mIncomingEoL_0D );
@@ -659,7 +663,8 @@ public class BlueTerm extends Activity {
         switch (item.getItemId()) {
         case R.id.connect:
         	
-        	if (getConnectionState() == BluetoothSerialService.STATE_NONE) {
+        	if (getConnectionState() == BluetoothSerialService.STATE_NONE ||
+                    getConnectionState() == BluetoothSerialService.STATE_LISTEN) {
         		// Launch the DeviceListActivity to see devices and do scan
         		Intent serverIntent = new Intent(this, DeviceListActivity.class);
         		startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
