@@ -61,9 +61,9 @@ public class BlueTerm extends Activity {
     private static final int REQUEST_CONNECT_DEVICE = 1;
     private static final int REQUEST_ENABLE_BT = 2;
     
-	public static final int ORIENTATION_SENSOR    = 0;
-	public static final int ORIENTATION_PORTRAIT  = 1;
-	public static final int ORIENTATION_LANDSCAPE = 2;
+    public static final int ORIENTATION_SENSOR    = 0;
+    public static final int ORIENTATION_PORTRAIT  = 1;
+    public static final int ORIENTATION_LANDSCAPE = 2;
 
 
     private static TextView mTitle;
@@ -93,21 +93,21 @@ public class BlueTerm extends Activity {
      * from other messages in the log. Public because it's used by several
      * classes.
      */
-	public static final String LOG_TAG = "BlueTerm";
+    public static final String LOG_TAG = "BlueTerm";
 
     // Message types sent from the BluetoothReadService Handler
     public static final int MESSAGE_STATE_CHANGE = 1;
     public static final int MESSAGE_READ = 2;
     public static final int MESSAGE_WRITE = 3;
     public static final int MESSAGE_DEVICE_NAME = 4;
-    public static final int MESSAGE_TOAST = 5;	
+    public static final int MESSAGE_TOAST = 5;    
 
     // Key names received from the BluetoothChatService Handler
     public static final String DEVICE_NAME = "device_name";
     public static final String TOAST = "toast";
-	
-	private BluetoothAdapter mBluetoothAdapter = null;
-	
+    
+    private BluetoothAdapter mBluetoothAdapter = null;
+    
     /**
      * Our main view. Displays the emulated terminal screen.
      */
@@ -123,13 +123,13 @@ public class BlueTerm extends Activity {
      * character set to be entered.
      */
     private TermKeyListener mKeyListener;
-		
-	
+        
+    
     private static BluetoothSerialService mSerialService = null;
     
-	private static InputMethodManager mInputManager;
-	
-	private boolean mEnablingBT;
+    private static InputMethodManager mInputManager;
+    
+    private boolean mEnablingBT;
     private boolean mLocalEcho = false;
     private boolean mLocalEdit = false;
     private int mFontSize = 9;
@@ -180,29 +180,29 @@ public class BlueTerm extends Activity {
     private int mControlKeyCode;
 
     private SharedPreferences mPrefs;
-	
+    
     private MenuItem mMenuItemConnect;
     private MenuItem mMenuItemStartStopRecording;
     
     private Dialog         mAboutDialog;
 
     
-	/** Called when the activity is first created. */
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
 
-		super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
 
-		if (DEBUG)
-			Log.e(LOG_TAG, "+++ ON CREATE +++");
+        if (DEBUG)
+            Log.e(LOG_TAG, "+++ ON CREATE +++");
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         readPrefs();
 
         CONTROL_KEY_NAME = getResources().getStringArray(R.array.entries_controlkey_preference);
 
-    	mInputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);		
-		
+        mInputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);        
+        
         // Set up the window layout
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         setContentView(R.layout.main);
@@ -214,13 +214,13 @@ public class BlueTerm extends Activity {
         mTitle = (TextView) findViewById(R.id.title_right_text);
         
 
-		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-		if (mBluetoothAdapter == null) {
+        if (mBluetoothAdapter == null) {
             finishDialogNoBluetooth();
-			return;
-		}
-		
+            return;
+        }
+        
         setContentView(R.layout.term_activity);
 
         mEmulatorView = (EmulatorView) findViewById(R.id.emulatorView);
@@ -229,7 +229,7 @@ public class BlueTerm extends Activity {
 
         mLineEditView = (EditText) findViewById(R.id.lineEdit);
         mLineEditView.setVisibility(mLocalEdit ? View.VISIBLE : View.GONE);
-		Log.d(LOG_TAG, "+++*** visibility now: "+mLineEditView.getVisibility());
+        Log.d(LOG_TAG, "+++*** visibility now: "+mLineEditView.getVisibility());
 
         mKeyListener = new TermKeyListener();
 
@@ -240,67 +240,67 @@ public class BlueTerm extends Activity {
 
         mSerialService = new BluetoothSerialService(this, mHandlerBT, mEmulatorView);
         
-		if (DEBUG)
-			Log.e(LOG_TAG, "+++ DONE IN ON CREATE +++");
-	}
+        if (DEBUG)
+            Log.e(LOG_TAG, "+++ DONE IN ON CREATE +++");
+    }
 
-	@Override
-	public void onStart() {
-		super.onStart();
-		if (DEBUG)
-			Log.e(LOG_TAG, "++ ON START ++");
-		
-		mEnablingBT = false;
-	}
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (DEBUG)
+            Log.e(LOG_TAG, "++ ON START ++");
+        
+        mEnablingBT = false;
+    }
 
-	@Override
-	public synchronized void onResume() {
-		super.onResume();
+    @Override
+    public synchronized void onResume() {
+        super.onResume();
 
-		if (DEBUG) {
-			Log.e(LOG_TAG, "+ ON RESUME +");
-		}
-		
-		if (!mEnablingBT) { // If we are turning on the BT we cannot check if it's enable
-		    if ( (mBluetoothAdapter != null)  && (!mBluetoothAdapter.isEnabled()) ) {
-			
+        if (DEBUG) {
+            Log.e(LOG_TAG, "+ ON RESUME +");
+        }
+        
+        if (!mEnablingBT) { // If we are turning on the BT we cannot check if it's enable
+            if ( (mBluetoothAdapter != null)  && (!mBluetoothAdapter.isEnabled()) ) {
+            
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage(R.string.alert_dialog_turn_on_bt)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle(R.string.alert_dialog_warning_title)
                     .setCancelable( false )
                     .setPositiveButton(R.string.alert_dialog_yes, new DialogInterface.OnClickListener() {
-                    	public void onClick(DialogInterface dialog, int id) {
-                    		mEnablingBT = true;
-                    		Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    		startActivityForResult(enableIntent, REQUEST_ENABLE_BT);			
-                    	}
+                        public void onClick(DialogInterface dialog, int id) {
+                            mEnablingBT = true;
+                            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);            
+                        }
                     })
                     .setNegativeButton(R.string.alert_dialog_no, new DialogInterface.OnClickListener() {
-                    	public void onClick(DialogInterface dialog, int id) {
-                    		finishDialogNoBluetooth();            	
-                    	}
+                        public void onClick(DialogInterface dialog, int id) {
+                            finishDialogNoBluetooth();                
+                        }
                     });
                 AlertDialog alert = builder.create();
                 alert.show();
-		    }		
-		
-		    if (mSerialService != null) {
-		    	// Only if the state is STATE_NONE, do we know that we haven't started already
-		    	if (mSerialService.getState() == BluetoothSerialService.STATE_NONE) {
-		    		// Start the Bluetooth chat services
-		    		mSerialService.start();
-		    	}
-		    }
+            }        
+        
+            if (mSerialService != null) {
+                // Only if the state is STATE_NONE, do we know that we haven't started already
+                if (mSerialService.getState() == BluetoothSerialService.STATE_NONE) {
+                    // Start the Bluetooth chat services
+                    mSerialService.start();
+                }
+            }
 
-		    if (mBluetoothAdapter != null) {
-		    	readPrefs();
-		    	updatePrefs();
+            if (mBluetoothAdapter != null) {
+                readPrefs();
+                updatePrefs();
 
-		    	mEmulatorView.onResume();
-		    }
-		}
-	}
+                mEmulatorView.onResume();
+            }
+        }
+    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -309,36 +309,36 @@ public class BlueTerm extends Activity {
         mEmulatorView.updateSize();
     }
 
-	@Override
-	public synchronized void onPause() {
-		super.onPause();
-		if (DEBUG)
-			Log.e(LOG_TAG, "- ON PAUSE -");
+    @Override
+    public synchronized void onPause() {
+        super.onPause();
+        if (DEBUG)
+            Log.e(LOG_TAG, "- ON PAUSE -");
 
-		if (mEmulatorView != null) {
-			mInputManager.hideSoftInputFromWindow(mEmulatorView.getWindowToken(), 0);
-			mEmulatorView.onPause();
-		}
-	}
+        if (mEmulatorView != null) {
+            mInputManager.hideSoftInputFromWindow(mEmulatorView.getWindowToken(), 0);
+            mEmulatorView.onPause();
+        }
+    }
 
     @Override
     public void onStop() {
         super.onStop();
         if(DEBUG)
-        	Log.e(LOG_TAG, "-- ON STOP --");
+            Log.e(LOG_TAG, "-- ON STOP --");
     }
 
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		if (DEBUG)
-			Log.e(LOG_TAG, "--- ON DESTROY ---");
-		
-        if (mSerialService != null)
-        	mSerialService.stop();
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (DEBUG)
+            Log.e(LOG_TAG, "--- ON DESTROY ---");
         
-	}
+        if (mSerialService != null)
+            mSerialService.stop();
+        
+    }
 
     private void readPrefs() {
         mLocalEcho = mPrefs.getBoolean(LOCALECHO_KEY, mLocalEcho);
@@ -354,14 +354,14 @@ public class BlueTerm extends Activity {
         mOutgoingEoL_0D = readIntPref(OUTGOING_EOL_0D_KEY, mOutgoingEoL_0D, 0x0D0A);
         mOutgoingEoL_0A = readIntPref(OUTGOING_EOL_0A_KEY, mOutgoingEoL_0A, 0x0D0A);
         
-		mScreenOrientation = readIntPref(SCREENORIENTATION_KEY, mScreenOrientation, 2);
+        mScreenOrientation = readIntPref(SCREENORIENTATION_KEY, mScreenOrientation, 2);
     }
 
     private void updatePrefs() {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         mLineEditView.setVisibility(mLocalEdit ? View.VISIBLE : View.GONE);
-		Log.d(LOG_TAG, "+++*** visibility now: "+mLineEditView.getVisibility());
+        Log.d(LOG_TAG, "+++*** visibility now: "+mLineEditView.getVisibility());
         mEmulatorView.setTextSize((int) (mFontSize * metrics.density));
         setColors();
         mControlKeyCode = CONTROL_KEY_SCHEMES[mControlKeyId];
@@ -373,16 +373,16 @@ public class BlueTerm extends Activity {
             mEmulatorView.setIncomingEoL_0A( mIncomingEoL_0A );
         }
         
-		switch (mScreenOrientation) {
-		case ORIENTATION_PORTRAIT:
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-			break;
-		case ORIENTATION_LANDSCAPE:
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-			break;
-		default:
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-		}
+        switch (mScreenOrientation) {
+        case ORIENTATION_PORTRAIT:
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            break;
+        case ORIENTATION_LANDSCAPE:
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            break;
+        default:
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        }
     }
 
     private int readIntPref(String key, int defaultValue, int maxValue) {
@@ -396,75 +396,75 @@ public class BlueTerm extends Activity {
         return val;
     }
     
-	public int getConnectionState() {
-		return mSerialService.getState();
-	}
+    public int getConnectionState() {
+        return mSerialService.getState();
+    }
 
-	private byte[] handleEndOfLineChars( int outgoingEoL ) {
-		byte[] out;
-		
-	    if ( outgoingEoL == 0x0D0A ) {
-	    	out = new byte[2];
-	    	out[0] = 0x0D;
-	    	out[1] = 0x0A;
-		}
-	    else {
-		    if ( outgoingEoL == 0x00 ) {
-		    	out = new byte[0];
-		    }
-		    else {
-		    	out = new byte[1];
-		    	out[0] = (byte)outgoingEoL;
-		    }
-	    }
-		
-		return out;
-	}
+    private byte[] handleEndOfLineChars( int outgoingEoL ) {
+        byte[] out;
+        
+        if ( outgoingEoL == 0x0D0A ) {
+            out = new byte[2];
+            out[0] = 0x0D;
+            out[1] = 0x0A;
+        }
+        else {
+            if ( outgoingEoL == 0x00 ) {
+                out = new byte[0];
+            }
+            else {
+                out = new byte[1];
+                out[0] = (byte)outgoingEoL;
+            }
+        }
+        
+        return out;
+    }
 
     public void send(byte[] out) {
-    	
-    	if ( out.length == 1 ) {
-    		
-    		if ( out[0] == 0x0D ) {
-    			out = handleEndOfLineChars( mOutgoingEoL_0D );
-    		}
-    		else {
-        		if ( out[0] == 0x0A ) {
-        			out = handleEndOfLineChars( mOutgoingEoL_0A );
-        		}
-    		}
-    	}
-    	
-    	if ( out.length > 0 ) {
-    		mSerialService.write( out );
-    	}
+        
+        if ( out.length == 1 ) {
+            
+            if ( out[0] == 0x0D ) {
+                out = handleEndOfLineChars( mOutgoingEoL_0D );
+            }
+            else {
+                if ( out[0] == 0x0A ) {
+                    out = handleEndOfLineChars( mOutgoingEoL_0A );
+                }
+            }
+        }
+        
+        if ( out.length > 0 ) {
+            mSerialService.write( out );
+        }
     }
     
     public void toggleKeyboard() {
-  		mInputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+          mInputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
     
     public int getTitleHeight() {
-    	return mTitle.getHeight();
+        return mTitle.getHeight();
     }
     
     // The Handler that gets information back from the BluetoothService
     private final Handler mHandlerBT = new Handler() {
-    	
+        
         @Override
-        public void handleMessage(Message msg) {        	
+        public void handleMessage(Message msg) {            
             switch (msg.what) {
             case MESSAGE_STATE_CHANGE:
                 if(DEBUG) Log.i(LOG_TAG, "MESSAGE_STATE_CHANGE: " + msg.arg1);
                 switch (msg.arg1) {
                 case BluetoothSerialService.STATE_CONNECTED:
-                	if (mMenuItemConnect != null) {
-                		mMenuItemConnect.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
-                		mMenuItemConnect.setTitle(R.string.disconnect);
-                	}
-                	
-                	mInputManager.showSoftInput(mEmulatorView, InputMethodManager.SHOW_IMPLICIT);
-                	
+                    if (mMenuItemConnect != null) {
+                        mMenuItemConnect.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+                        mMenuItemConnect.setTitle(R.string.disconnect);
+                    }
+                    
+                    mInputManager.showSoftInput(mEmulatorView, InputMethodManager.SHOW_IMPLICIT);
+                    
                     mTitle.setText( R.string.title_connected_to );
                     mTitle.append(" " + mConnectedDeviceName);
                     break;
@@ -475,23 +475,23 @@ public class BlueTerm extends Activity {
                     
                 case BluetoothSerialService.STATE_LISTEN:
                 case BluetoothSerialService.STATE_NONE:
-                	if (mMenuItemConnect != null) {
-                		mMenuItemConnect.setIcon(android.R.drawable.ic_menu_search);
-                		mMenuItemConnect.setTitle(R.string.connect);
-                	}
+                    if (mMenuItemConnect != null) {
+                        mMenuItemConnect.setIcon(android.R.drawable.ic_menu_search);
+                        mMenuItemConnect.setTitle(R.string.connect);
+                    }
 
-            		mInputManager.hideSoftInputFromWindow(mEmulatorView.getWindowToken(), 0);
-                	
+                    mInputManager.hideSoftInputFromWindow(mEmulatorView.getWindowToken(), 0);
+                    
                     mTitle.setText(R.string.title_not_connected);
 
                     break;
                 }
                 break;
             case MESSAGE_WRITE:
-            	if (mLocalEcho) {
-            		byte[] writeBuf = (byte[]) msg.obj;
-            		mEmulatorView.write(writeBuf, msg.arg1);
-            	}
+                if (mLocalEcho) {
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    mEmulatorView.write(writeBuf, msg.arg1);
+                }
                 
                 break;
 /*                
@@ -523,7 +523,7 @@ public class BlueTerm extends Activity {
         .setCancelable( false )
         .setPositiveButton(R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
                    public void onClick(DialogInterface dialog, int id) {
-                       finish();            	
+                       finish();                
                    }
                });
         AlertDialog alert = builder.create();
@@ -572,11 +572,11 @@ public class BlueTerm extends Activity {
         int letter = mKeyListener.keyDown(keyCode, event);
 
         if (letter >= 0) {
-        	byte[] buffer = new byte[1];
-        	buffer[0] = (byte)letter;
-        	
-        	send( buffer );
-        	//mSerialService.write(buffer);
+            byte[] buffer = new byte[1];
+            buffer[0] = (byte)letter;
+            
+            send( buffer );
+            //mSerialService.write(buffer);
         }
         return true;
     }
@@ -611,7 +611,7 @@ public class BlueTerm extends Activity {
      * @param down
      */
     private boolean handleDPad(int keyCode, boolean down) {
-    	byte[] buffer = new byte[1];
+        byte[] buffer = new byte[1];
 
         if (keyCode < KeyEvent.KEYCODE_DPAD_UP ||
                 keyCode > KeyEvent.KEYCODE_DPAD_CENTER) {
@@ -620,9 +620,9 @@ public class BlueTerm extends Activity {
 
         if (down) {
             if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
-            	buffer[0] = '\r';
-            	//mSerialService.write( buffer );
-            	send( buffer );
+                buffer[0] = '\r';
+                //mSerialService.write( buffer );
+                send( buffer );
             } else {
                 char code;
                 switch (keyCode) {
@@ -640,21 +640,21 @@ public class BlueTerm extends Activity {
                     code = 'C';
                     break;
                 }
-            	buffer[0] = 27; // ESC
-            	//mSerialService.write( buffer );                    
-            	send( buffer );
+                buffer[0] = 27; // ESC
+                //mSerialService.write( buffer );                    
+                send( buffer );
                 if (mEmulatorView.getKeypadApplicationMode()) {
-                	buffer[0] = 'O';
-                	//mSerialService.write( buffer );
-                	send( buffer );
+                    buffer[0] = 'O';
+                    //mSerialService.write( buffer );
+                    send( buffer );
                 } else {
-                	buffer[0] = '[';
-                	//mSerialService.write( buffer );
-                	send( buffer );
+                    buffer[0] = '[';
+                    //mSerialService.write( buffer );
+                    send( buffer );
                 }
-            	buffer[0] = (byte)code;
-            	//mSerialService.write( buffer );
-            	send( buffer );
+                buffer[0] = (byte)code;
+                //mSerialService.write( buffer );
+                send( buffer );
             }
         }
         return true;
@@ -677,36 +677,36 @@ public class BlueTerm extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.connect:
-        	
-        	if (getConnectionState() == BluetoothSerialService.STATE_NONE ||
+            
+            if (getConnectionState() == BluetoothSerialService.STATE_NONE ||
                     getConnectionState() == BluetoothSerialService.STATE_LISTEN) {
-        		// Launch the DeviceListActivity to see devices and do scan
-        		Intent serverIntent = new Intent(this, DeviceListActivity.class);
-        		startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
-        	}
-        	else
-            	if (getConnectionState() == BluetoothSerialService.STATE_CONNECTED) {
-            		mSerialService.stop();
-		    		mSerialService.start();
-            	}
+                // Launch the DeviceListActivity to see devices and do scan
+                Intent serverIntent = new Intent(this, DeviceListActivity.class);
+                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+            }
+            else
+                if (getConnectionState() == BluetoothSerialService.STATE_CONNECTED) {
+                    mSerialService.stop();
+                    mSerialService.start();
+                }
             return true;
         case R.id.preferences:
-        	doPreferences();
+            doPreferences();
             return true;
         case R.id.menu_special_keys:
             doDocumentKeys();
             return true;
         case R.id.menu_start_stop_save:
-        	if (mMenuItemStartStopRecording.getTitle() == getString(R.string.menu_stop_logging) ) {
-        		doStopRecording();
-        	}	
-        	else {
-        		doStartRecording();
-        	}
+            if (mMenuItemStartStopRecording.getTitle() == getString(R.string.menu_stop_logging) ) {
+                doStopRecording();
+            }    
+            else {
+                doStartRecording();
+            }
             return true;
             
         case R.id.menu_about:
-        	showAboutDialog();
+            showAboutDialog();
             return true;
         }
         return false;
@@ -742,41 +742,41 @@ public class BlueTerm extends Activity {
 
 
     private void doStartRecording() {
-    	File sdCard = Environment.getExternalStorageDirectory();
-    	
-    	SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmss");
-    	String currentDateTimeString = format.format(new Date());
-    	String fileName = sdCard.getAbsolutePath() + "/blueTerm_" + currentDateTimeString + ".log";
-    	
-    	mEmulatorView.setFileNameLog( fileName );
-    	mEmulatorView.startRecording();
+        File sdCard = Environment.getExternalStorageDirectory();
+        
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        String currentDateTimeString = format.format(new Date());
+        String fileName = sdCard.getAbsolutePath() + "/blueTerm_" + currentDateTimeString + ".log";
+        
+        mEmulatorView.setFileNameLog( fileName );
+        mEmulatorView.startRecording();
 
-    	mMenuItemStartStopRecording.setTitle(R.string.menu_stop_logging);
+        mMenuItemStartStopRecording.setTitle(R.string.menu_stop_logging);
         Toast.makeText(getApplicationContext(), getString(R.string.menu_logging_started) + "\n\n" + fileName, Toast.LENGTH_LONG).show();
     }
     
     private void doStopRecording() {
-    	mEmulatorView.stopRecording();
-    	mMenuItemStartStopRecording.setTitle(R.string.menu_start_logging);    	
+        mEmulatorView.stopRecording();
+        mMenuItemStartStopRecording.setTitle(R.string.menu_start_logging);        
         Toast.makeText(getApplicationContext(), getString(R.string.menu_logging_stopped), Toast.LENGTH_SHORT).show();
     }
     
 
-	private void showAboutDialog() {
-		mAboutDialog = new Dialog(BlueTerm.this);
-		mAboutDialog.setContentView(R.layout.about);
-		mAboutDialog.setTitle( getString( R.string.app_name ) + " " + getString( R.string.app_version ));
-		
-		Button buttonOpen = (Button) mAboutDialog.findViewById(R.id.buttonDialog);
-		buttonOpen.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-		 
-				mAboutDialog.dismiss();
-			}
-		});		
-		
-		mAboutDialog.show();
+    private void showAboutDialog() {
+        mAboutDialog = new Dialog(BlueTerm.this);
+        mAboutDialog.setContentView(R.layout.about);
+        mAboutDialog.setTitle( getString( R.string.app_name ) + " " + getString( R.string.app_version ));
+        
+        Button buttonOpen = (Button) mAboutDialog.findViewById(R.id.buttonDialog);
+        buttonOpen.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+         
+                mAboutDialog.dismiss();
+            }
+        });        
+        
+        mAboutDialog.show();
     }
 }
 
@@ -1474,8 +1474,8 @@ class TerminalEmulator {
 
     private boolean mAlternateCharSet;
     
-	private int mIncomingEoL_0D = 0x0D;
-	private int mIncomingEoL_0A = 0x0A;
+    private int mIncomingEoL_0D = 0x0D;
+    private int mIncomingEoL_0A = 0x0A;
     
 
     /**
@@ -1568,18 +1568,18 @@ class TerminalEmulator {
         }
     }
     
-	private void handleEndOfLineChars( int incomingEoL ) {
+    private void handleEndOfLineChars( int incomingEoL ) {
 
-	    if ( incomingEoL == 0x0D0A ) {
-	    	process( (byte)0x0D );
-	    	process( (byte)0x0A );
-		}
-	    else {
-		    if ( incomingEoL != 0x00 ) {
-		    	process( (byte)incomingEoL );
-		    }
-	    }
-	}    
+        if ( incomingEoL == 0x0D0A ) {
+            process( (byte)0x0D );
+            process( (byte)0x0A );
+        }
+        else {
+            if ( incomingEoL != 0x00 ) {
+                process( (byte)incomingEoL );
+            }
+        }
+    }    
 
     /**
      * Accept bytes (typically from the pseudo-teletype) and process them.
@@ -1600,17 +1600,17 @@ class TerminalEmulator {
                     Log.w(BlueTerm.LOG_TAG, "'" + Character.toString(printableB) + "' (" + Integer.toString(b) + ")");
                 }
 
-        		if ( b == 0x0D ) {
-        			handleEndOfLineChars( mIncomingEoL_0D );
-        		}
-        		else {
-            		if ( b == 0x0A ) {
-            			handleEndOfLineChars( mIncomingEoL_0A );
-            		}
-            		else {
-                        process( b );            			
-            		}
-        		}
+                if ( b == 0x0D ) {
+                    handleEndOfLineChars( mIncomingEoL_0D );
+                }
+                else {
+                    if ( b == 0x0A ) {
+                        handleEndOfLineChars( mIncomingEoL_0A );
+                    }
+                    else {
+                        process( b );                        
+                    }
+                }
                 mProcessedCharCount++;
             } catch (Exception e) {
                 Log.e(BlueTerm.LOG_TAG, "Exception while processing character "
@@ -2242,7 +2242,7 @@ class TerminalEmulator {
      * @param data
      */
     private void write(byte[] data) {
-    	/*
+        /*
         try {
             mTermOut.write(data);
             mTermOut.flush();
@@ -2457,11 +2457,11 @@ class TerminalEmulator {
     }
     
     public void setIncomingEoL_0D( int eol ) {
-    	mIncomingEoL_0D = eol;
+        mIncomingEoL_0D = eol;
     }
 
     public void setIncomingEoL_0A( int eol ) {
-    	mIncomingEoL_0A = eol;
+        mIncomingEoL_0A = eol;
     }
 }
 
@@ -2856,7 +2856,7 @@ class EmulatorView extends View implements GestureDetector.OnGestureListener {
 
     @Override
     public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
-    	outAttrs.inputType = EditorInfo.TYPE_NULL;
+        outAttrs.inputType = EditorInfo.TYPE_NULL;
         return new BaseInputConnection(this, false) {
 
             @Override
@@ -3021,17 +3021,17 @@ class EmulatorView extends View implements GestureDetector.OnGestureListener {
             }
 
             private void mapAndSend(int c) throws IOException {
-            	byte[] mBuffer = new byte[1];
-            	mBuffer[0] = (byte)mKeyListener.mapControlChar(c);
-            	
-            	mBlueTerm.send(mBuffer);
+                byte[] mBuffer = new byte[1];
+                mBuffer[0] = (byte)mKeyListener.mapControlChar(c);
+                
+                mBlueTerm.send(mBuffer);
             }
         };
     }
         
     public void write(byte[] buffer, int length) {
         try {
-			mByteQueue.write(buffer, 0, length);
+            mByteQueue.write(buffer, 0, length);
 
             } catch (InterruptedException e) {
         }
@@ -3068,8 +3068,8 @@ class EmulatorView extends View implements GestureDetector.OnGestureListener {
 
     @Override
     protected int computeVerticalScrollRange() {
-    	if (mTranscriptScreen == null)
-    		return 0;
+        if (mTranscriptScreen == null)
+            return 0;
 
         return mTranscriptScreen.getActiveRows();
     }
@@ -3081,8 +3081,8 @@ class EmulatorView extends View implements GestureDetector.OnGestureListener {
 
     @Override
     protected int computeVerticalScrollOffset() {
-    	if (mTranscriptScreen == null)
-    		return 0;
+        if (mTranscriptScreen == null)
+            return 0;
 
         return mTranscriptScreen.getActiveRows() + mTopRow - mRows;
     }
@@ -3094,7 +3094,7 @@ class EmulatorView extends View implements GestureDetector.OnGestureListener {
      * @param termOut the output stream for the pseudo-teletype
      */
     public void initialize(BlueTerm blueTerm) {
-    	mBlueTerm = blueTerm;
+        mBlueTerm = blueTerm;
         mTextSize = 15;
         mForeground = BlueTerm.WHITE;
         mBackground = BlueTerm.BLACK;
@@ -3156,13 +3156,13 @@ class EmulatorView extends View implements GestureDetector.OnGestureListener {
     // Begin GestureDetector.OnGestureListener methods
 
     public boolean onSingleTapUp(MotionEvent e) {
-    	
-    	mBlueTerm.toggleKeyboard();
+        
+        mBlueTerm.toggleKeyboard();
         return true;
     }
 
     public void onLongPress(MotionEvent e) {
-    	mBlueTerm.doOpenOptionsMenu();
+        mBlueTerm.doOpenOptionsMenu();
     }
 
     @Override
@@ -3241,8 +3241,8 @@ class EmulatorView extends View implements GestureDetector.OnGestureListener {
 
     private void updateSize(int w, int h) {
         if(w <= 0 || h <= 0)
-        	return;
-    	
+            return;
+        
         mColumns = w / mCharacterWidth;
         mRows = h / mCharacterHeight;
 
@@ -3262,13 +3262,13 @@ class EmulatorView extends View implements GestureDetector.OnGestureListener {
     }
 
     void updateSize() {
-    	Rect visibleRect;
-    	
+        Rect visibleRect;
+        
         if (mBlueTerm == null)
-        	return;
-    	
+            return;
+        
         if (mKnownSize) {
-        	visibleRect = new Rect();
+            visibleRect = new Rect();
             getWindowVisibleDisplayFrame(visibleRect);
             int w = visibleRect.width();
             int h = visibleRect.height() - mBlueTerm.getTitleHeight() - 2;
@@ -3292,7 +3292,7 @@ class EmulatorView extends View implements GestureDetector.OnGestureListener {
             append(mReceiveBuffer, 0, bytesRead);
 
             if(mRecording) {
-            	this.writeLog( stringRead );
+                this.writeLog( stringRead );
             }            
         } catch (InterruptedException e) {
         }
@@ -3304,7 +3304,7 @@ class EmulatorView extends View implements GestureDetector.OnGestureListener {
         int h = getHeight();
         
         if (mCharacterWidth == 0)
-        	return;
+            return;
 
         canvas.drawRect(0, 0, w, h, mBackgroundPaint);
         mVisibleColumns = w / mCharacterWidth;
@@ -3337,57 +3337,57 @@ class EmulatorView extends View implements GestureDetector.OnGestureListener {
     }
 
     public void setFileNameLog( String fileNameLog ) {
-    	mFileNameLog = fileNameLog;
+        mFileNameLog = fileNameLog;
     }
     
     public void startRecording() {
-    	mRecording = true;
+        mRecording = true;
     }
     
     public void stopRecording() {
-    	mRecording = false;
+        mRecording = false;
     }
     
     public boolean writeLog(String buffer) {
-    	String state = Environment.getExternalStorageState();    	
-		File logFile = new File ( mFileNameLog );
-		
-	    if (Environment.MEDIA_MOUNTED.equals(state)) {
-	
-	    	try {
-	            FileOutputStream f = new FileOutputStream( logFile, true );
-	            
-	            PrintWriter pw = new PrintWriter(f);
-	            pw.print( buffer );
-	            pw.flush();
-	            pw.close();
-	
-	            f.close();
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }	
-	    }
-	    else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-	    	this.stopRecording();
-	    	return false;
-	    } else {
-	    	this.stopRecording();
-	    	return false;
-	    }
+        String state = Environment.getExternalStorageState();        
+        File logFile = new File ( mFileNameLog );
+        
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+    
+            try {
+                FileOutputStream f = new FileOutputStream( logFile, true );
+                
+                PrintWriter pw = new PrintWriter(f);
+                pw.print( buffer );
+                pw.flush();
+                pw.close();
+    
+                f.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }    
+        }
+        else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+            this.stopRecording();
+            return false;
+        } else {
+            this.stopRecording();
+            return false;
+        }
 
-    	return true;
+        return true;
     }
 
     public void setIncomingEoL_0D( int eol ) {
-    	if ( mEmulator != null ) {
-    		mEmulator.setIncomingEoL_0D( eol );
-    	}
+        if ( mEmulator != null ) {
+            mEmulator.setIncomingEoL_0D( eol );
+        }
     }
 
     public void setIncomingEoL_0A( int eol ) {
-    	if ( mEmulator != null ) {
-    		mEmulator.setIncomingEoL_0A( eol );
-    	}
+        if ( mEmulator != null ) {
+            mEmulator.setIncomingEoL_0A( eol );
+        }
     }
 }
 
