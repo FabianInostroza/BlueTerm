@@ -125,6 +125,7 @@ public class BlueTerm extends Activity {
 	
 	private boolean mEnablingBT;
     private boolean mLocalEcho = false;
+    private boolean mLocalEdit = false;
     private int mFontSize = 9;
     private int mColorId = 2;
     private int mControlKeyId = 0;
@@ -138,6 +139,7 @@ public class BlueTerm extends Activity {
     private int mScreenOrientation = 0;
 
     private static final String LOCALECHO_KEY = "localecho";
+    private static final String LOCALEDIT_KEY = "localedit";
     private static final String FONTSIZE_KEY = "fontsize";
     private static final String COLOR_KEY = "color";
     private static final String CONTROLKEY_KEY = "controlkey";
@@ -330,6 +332,7 @@ public class BlueTerm extends Activity {
 
     private void readPrefs() {
         mLocalEcho = mPrefs.getBoolean(LOCALECHO_KEY, mLocalEcho);
+        mLocalEdit = mPrefs.getBoolean(LOCALEDIT_KEY, mLocalEdit);
         mFontSize = readIntPref(FONTSIZE_KEY, mFontSize, 20);
         mColorId = readIntPref(COLOR_KEY, mColorId, COLOR_SCHEMES.length - 1);
         mControlKeyId = readIntPref(CONTROLKEY_KEY, mControlKeyId, CONTROL_KEY_SCHEMES.length - 1);
