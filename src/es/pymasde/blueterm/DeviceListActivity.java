@@ -16,6 +16,7 @@
 
 package es.pymasde.blueterm;
 
+import java.lang.reflect.Method;
 import java.util.Set;
 
 import android.app.Activity;
@@ -109,7 +110,23 @@ public class DeviceListActivity extends Activity {
         if (pairedDevices.size() > 0) {
             findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
             for (BluetoothDevice device : pairedDevices) {
-                mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+				String name = null;
+				// first try to get alias name
+				try {
+					if (android.os.Build.VERSION.SDK_INT >= 14) {
+						Method gra = BluetoothDevice.class.getDeclaredMethod("getAlias");
+						name = (String) gra.invoke(device);
+						Log.d(TAG, ">>> Got alias: "+name);
+					}
+				} catch (Exception e) {
+					Log.d(TAG, "Could not access alias", e);
+					// and just ignore it
+				}
+				if (name == null) {
+					// fallback
+					name = device.getName();
+				}
+                mPairedDevicesArrayAdapter.add(name + "\n" + device.getAddress());
             }
         } else {
             String noDevices = getResources().getText(R.string.none_paired).toString();
