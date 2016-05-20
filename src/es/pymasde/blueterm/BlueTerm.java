@@ -494,6 +494,9 @@ public class BlueTerm extends Activity implements TextView.OnEditorActionListene
                         mMenuItemConnect.setTitle(R.string.disconnect);
                     }
                     
+                    if (mLocalEdit) {
+                        mLineEditView.requestFocus();
+                    }
                     mInputManager.showSoftInput(mEmulatorView, InputMethodManager.SHOW_IMPLICIT);
                     
                     mTitle.setText( R.string.title_connected_to );
