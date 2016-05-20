@@ -56,7 +56,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 
-public class BlueTerm extends Activity {
+public class BlueTerm extends Activity implements TextView.OnEditorActionListener {
     // Intent request codes
     private static final int REQUEST_CONNECT_DEVICE = 1;
     private static final int REQUEST_ENABLE_BT = 2;
@@ -229,7 +229,7 @@ public class BlueTerm extends Activity {
 
         mLineEditView = (EditText) findViewById(R.id.lineEdit);
         mLineEditView.setVisibility(mLocalEdit ? View.VISIBLE : View.GONE);
-        Log.d(LOG_TAG, "+++*** visibility now: "+mLineEditView.getVisibility());
+        mLineEditView.setOnEditorActionListener(this);
 
         mKeyListener = new TermKeyListener();
 
@@ -400,6 +400,29 @@ public class BlueTerm extends Activity {
     
     public int getConnectionState() {
         return mSerialService.getState();
+    }
+
+    @Override
+    public boolean onEditorAction(TextView edit, int actionId, KeyEvent event) {
+        // User pressed Enter in line editor;
+        // we want to prevent keyboard hiding (TODO)
+        // and send all characters, together with \r\n
+
+        // fetch current text
+        String line = "" + edit.getText() + "\r\n";
+        // and clean field
+        edit.setText("");
+
+        byte[] buf = null;
+        try {
+            // convert buffer to bytes
+            buf = line.getBytes("UTF-8");
+        } catch(IOException e) {} // will never happen, as UTF8 is guaranteed
+
+        // do send it
+        send(buf);
+
+        return true; // means that we consumed an action, don't hide keyboard
     }
 
     private byte[] handleEndOfLineChars( int outgoingEoL ) {
