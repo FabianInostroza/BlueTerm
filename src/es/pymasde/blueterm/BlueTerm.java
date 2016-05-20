@@ -235,7 +235,9 @@ public class BlueTerm extends Activity {
 
         mEmulatorView.setFocusable(true);
         mEmulatorView.setFocusableInTouchMode(true);
-        mEmulatorView.requestFocus();
+        if (!mLocalEdit) {
+            mEmulatorView.requestFocus();
+        }
         mEmulatorView.register(mKeyListener);
 
         mSerialService = new BluetoothSerialService(this, mHandlerBT, mEmulatorView);
