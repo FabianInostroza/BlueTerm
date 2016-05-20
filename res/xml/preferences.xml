@@ -33,8 +33,7 @@
                 android:key="localecho"
                 android:defaultValue="@string/default_value_localecho_preference"
                 android:title="@string/title_localecho_preference"
-                android:summary="@string/summary_localecho_preference"
-                android:dependency="localedit" />
+                android:summary="@string/summary_localecho_preference" />
                 
         <CheckBoxPreference 
                 android:key="localedit"
