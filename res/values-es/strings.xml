@@ -38,7 +38,7 @@
     <!-- Preference dialog -->
     <string name="general_preferences">General</string>
 
-    <string name="title_localhecho_preference">Echo local</string>
+    <string name="title_localecho_preference">Echo local</string>
     <string name="summary_localecho_preference"></string>
     
     <string name="title_allowinsecureconnections_preference">Permitir conexiones inseguras</string>
