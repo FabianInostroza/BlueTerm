@@ -34,6 +34,7 @@ import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import android.bluetooth.BluetoothAdapter;
@@ -111,6 +112,11 @@ public class BlueTerm extends Activity {
      * Our main view. Displays the emulated terminal screen.
      */
     private EmulatorView mEmulatorView;
+
+    /**
+     * Line editor field. Only for Local Edit mode.
+     */
+    private EditText mLineEditView;
 
     /**
      * A key listener that tracks the modifier keys and allows the full ASCII
@@ -220,6 +226,9 @@ public class BlueTerm extends Activity {
         mEmulatorView = (EmulatorView) findViewById(R.id.emulatorView);
 
         mEmulatorView.initialize( this );
+
+        mLineEditView = (EditText) findViewById(R.id.lineEdit);
+        mLineEditView.setVisibility(mLocalEdit ? View.VISIBLE : View.GONE);
 
         mKeyListener = new TermKeyListener();
 
@@ -350,6 +359,7 @@ public class BlueTerm extends Activity {
     private void updatePrefs() {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        mLineEditView.setVisibility(mLocalEdit ? View.VISIBLE : View.GONE);
         mEmulatorView.setTextSize((int) (mFontSize * metrics.density));
         setColors();
         mControlKeyCode = CONTROL_KEY_SCHEMES[mControlKeyId];
