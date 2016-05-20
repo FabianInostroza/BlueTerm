@@ -36,6 +36,12 @@
                 android:summary="@string/summary_localecho_preference" />
                 
         <CheckBoxPreference 
+                android:key="allowinboundconnections"
+                android:defaultValue="@string/default_value_allowinboundconnections_preference"
+                android:title="@string/title_allowinboundconnections_preference"
+                android:summary="@string/summary_allowinboundconnections_preference" />
+
+        <CheckBoxPreference 
                 android:key="allowinsecureconnections"
                 android:defaultValue="@string/default_value_allowinsecureconnections_preference"
                 android:title="@string/title_allowinsecureconnections_preference"
