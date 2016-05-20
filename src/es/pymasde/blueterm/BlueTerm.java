@@ -405,11 +405,12 @@ public class BlueTerm extends Activity implements TextView.OnEditorActionListene
     @Override
     public boolean onEditorAction(TextView edit, int actionId, KeyEvent event) {
         // User pressed Enter in line editor;
-        // we want to prevent keyboard hiding (TODO)
-        // and send all characters, together with \r\n
+        // we want to prevent keyboard hiding
+        // and send all characters, with \r\n appended.
+        // 
 
         // fetch current text
-        String line = "" + edit.getText() + "\r\n";
+        String line = "" + edit.getText();
         // and clean field
         edit.setText("");
 
@@ -419,8 +420,13 @@ public class BlueTerm extends Activity implements TextView.OnEditorActionListene
             buf = line.getBytes("UTF-8");
         } catch(IOException e) {} // will never happen, as UTF8 is guaranteed
 
-        // do send it
+        // send the line (without \r\n yet)
         send(buf);
+
+        // now separately send \r\n - it will properly convert it according to settings
+        // but only if we call it for one byte at a time.
+        send(new byte[]{ 0x0D });
+        send(new byte[]{ 0x0A });
 
         return true; // means that we consumed an action, don't hide keyboard
     }
