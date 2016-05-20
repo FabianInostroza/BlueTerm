@@ -22,9 +22,24 @@
     android:orientation="vertical">
 
     <es.pymasde.blueterm.EmulatorView android:id="@+id/emulatorView"
-	      android:layout_width="wrap_content"
-	      android:layout_height="wrap_content"
-	      android:layout_alignParentLeft="true"
-	      />
-   
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/lineEdit"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:inputType="textUri"
+            />
+
+    </LinearLayout>
+
 </LinearLayout>
