@@ -318,9 +318,9 @@ public class BluetoothSerialService {
         }
 
         public void run() {
-            Log.d(TAG, "Socket Type: " + mSocketType +
-                    "BEGIN mAcceptThread" + this);
             setName("AcceptThread" + mSocketType);
+            Log.d(TAG, "Socket Type: " + mSocketType +
+                    " BEGIN mAcceptThread" + this);
 
             BluetoothSocket socket = null;
 
@@ -330,6 +330,7 @@ public class BluetoothSerialService {
                     // This is a blocking call and will only return on a
                     // successful connection or an exception
                     socket = mmServerSocket.accept();
+                    Log.i(TAG, "Got Conn! " + socket);
                 } catch (IOException e) {
                     Log.e(TAG, "Socket Type: " + mSocketType + "accept() failed", e);
                     break;
