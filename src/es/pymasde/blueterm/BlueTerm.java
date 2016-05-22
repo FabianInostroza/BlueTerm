@@ -305,13 +305,6 @@ public class BlueTerm extends Activity implements TextView.OnEditorActionListene
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        mEmulatorView.updateSize();
-    }
-
-    @Override
     public synchronized void onPause() {
         super.onPause();
         if (DEBUG)
@@ -2823,13 +2816,6 @@ class EmulatorView extends View implements GestureDetector.OnGestureListener {
 
     private BlueTerm mBlueTerm;
     
-    private Runnable mCheckSize = new Runnable() {
-        public void run() {
-            updateSize();
-            mHandler.postDelayed(this, 1000);
-        }
-    };
-    
     /**
      * Our message handler class. Implements a periodic callback.
      */
@@ -2855,12 +2841,9 @@ class EmulatorView extends View implements GestureDetector.OnGestureListener {
     }
     
     public void onResume() {
-        updateSize();
-        mHandler.postDelayed(mCheckSize, 1000);
     }
 
     public void onPause() {
-        mHandler.removeCallbacks(mCheckSize);
     }
     
 
@@ -3259,23 +3242,26 @@ class EmulatorView extends View implements GestureDetector.OnGestureListener {
         mCharacterHeight = mTextRenderer.getCharacterHeight();
 
         if (mKnownSize) {
-            //updateSize(getWidth(), getHeight());
-            updateSize();
+            updateSize(getWidth(), getHeight());
+            //updateSize();
         }
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        Log.i("EmuView", "onSizeChanged: "+w+", "+h+", "+oldw+", "+oldh);
         //updateSize(w, h);
         if (!mKnownSize)
             mKnownSize = true;
 
-        updateSize();
+        updateSize(w, h);
     }
 
     private void updateSize(int w, int h) {
         if(w <= 0 || h <= 0)
             return;
+
+        Log.d("EmuView", "UpdateSize: "+w+", "+h);
         
         mColumns = w / mCharacterWidth;
         mRows = h / mCharacterHeight;
@@ -3294,25 +3280,6 @@ class EmulatorView extends View implements GestureDetector.OnGestureListener {
         this.layout(0, 0, w, h);
         invalidate();
     }
-
-    void updateSize() {
-        Rect visibleRect;
-        
-        if (mBlueTerm == null)
-            return;
-        
-        if (mKnownSize) {
-            visibleRect = new Rect();
-            getWindowVisibleDisplayFrame(visibleRect);
-            int w = visibleRect.width();
-            int h = visibleRect.height() - mBlueTerm.getTitleHeight() - 2;
-            if (w != mWidth || h != mHeight) {
-              mWidth = w;
-              mHeight = h;
-              updateSize( w, h );
-            }
-        }
-    }    
 
     /**
      * Look for new input from the ptty, send it to the terminal emulator.
