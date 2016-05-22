@@ -356,6 +356,11 @@ public class BlueTerm extends Activity implements TextView.OnEditorActionListene
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         mLineEditView.setVisibility(mLocalEdit ? View.VISIBLE : View.GONE);
+        if (mLocalEdit) {
+            mLineEditView.requestFocus();
+        } else {
+            mEmulatorView.requestFocus();
+        }
         Log.d(LOG_TAG, "+++*** visibility now: "+mLineEditView.getVisibility());
         mEmulatorView.setTextSize((int) (mFontSize * metrics.density));
         setColors();
