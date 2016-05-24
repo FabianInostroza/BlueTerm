@@ -37,9 +37,11 @@
                 
         <CheckBoxPreference 
                 android:key="localedit"
+                android:disableDependentsState="true"
                 android:defaultValue="@string/default_value_localedit_preference"
                 android:title="@string/title_localedit_preference"
                 android:summary="@string/summary_localedit_preference" />
+            <!-- if this is set to true then its dependents (controlkey) will be disabled -->
                 
         <CheckBoxPreference 
                 android:key="allowinboundconnections"
@@ -126,6 +128,7 @@
 
         <ListPreference
                 android:key="controlkey"
+                android:dependency="localedit"
                 android:defaultValue="@string/default_value_controlkey_preference"
                 android:title="@string/title_controlkey_preference"
                 android:summary="@string/summary_controlkey_preference"
