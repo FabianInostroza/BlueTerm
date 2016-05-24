@@ -591,7 +591,11 @@ public class BlueTerm extends Activity implements TextView.OnEditorActionListene
     }
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (handleControlKey(keyCode, true)) {
+		if (mLocalEdit) {
+			// local editing mode is on,
+			// so all keys here should be redirected to system
+			return super.onKeyDown(keyCode, event);
+		} else if (handleControlKey(keyCode, true)) {
             return true;
         } else if (isSystemKey(keyCode, event)) {
             // Don't intercept the system keys
@@ -615,7 +619,11 @@ public class BlueTerm extends Activity implements TextView.OnEditorActionListene
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (handleControlKey(keyCode, false)) {
+		if (mLocalEdit) {
+			// local editing mode is on,
+			// so all keys here should be redirected to system
+			return super.onKeyDown(keyCode, event);
+		} else if (handleControlKey(keyCode, false)) {
             return true;
         } else if (isSystemKey(keyCode, event)) {
             // Don't intercept the system keys
